@@ -1,0 +1,32 @@
+
+services:
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80" # React app accessible on port 3000
+
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - MONGODB_URI=mongodb://db:27017/todolist
+    depends_on:
+      - db
+
+  db:
+    image: mongo:latest
+    restart: always
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=password
+      - MONGO_INITDB_DATABASE=todolist
+    ports:
+      - "27017:27017" # MongoDB accessible on port 27017
+
+volumes:
+  db_data:
